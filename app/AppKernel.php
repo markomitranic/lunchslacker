@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new CL\Bundle\SlackBundle\CLSlackBundle(),
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
+            new Sensio\Bundle\BuzzBundle\SensioBuzzBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

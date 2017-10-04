@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd9f6f2d85bc8f8c889209a02a1a4767",
+    "content-hash": "93bf8aeb0eb200e463fb01d4a4ace7cb",
     "packages": [
         {
             "name": "cleentfaar/slack",
@@ -1683,6 +1683,54 @@
             "time": "2017-09-28T15:17:28+00:00"
         },
         {
+            "name": "kriswallsmith/buzz",
+            "version": "v0.15.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kriswallsmith/Buzz.git",
+                "reference": "d59932b335c2f2f3ec9eee66a37db6bd50d39e13"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/d59932b335c2f2f3ec9eee66a37db6bd50d39e13",
+                "reference": "d59932b335c2f2f3ec9eee66a37db6bd50d39e13",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^3.3"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Buzz\\": "lib/Buzz"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Lightweight HTTP client",
+            "homepage": "https://github.com/kriswallsmith/Buzz",
+            "keywords": [
+                "curl",
+                "http client"
+            ],
+            "time": "2017-08-19T09:43:47+00:00"
+        },
+        {
             "name": "monolog/monolog",
             "version": "1.23.0",
             "source": {
@@ -2194,6 +2242,54 @@
                 "simple-cache"
             ],
             "time": "2017-01-02T13:31:39+00:00"
+        },
+        {
+            "name": "sensio/buzz-bundle",
+            "version": "dev-master",
+            "target-dir": "Sensio/Bundle/BuzzBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sensiolabs/SensioBuzzBundle.git",
+                "reference": "ad7c722f755471b80f5c9c7dd703b2975f8a518b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sensiolabs/SensioBuzzBundle/zipball/ad7c722f755471b80f5c9c7dd703b2975f8a518b",
+                "reference": "ad7c722f755471b80f5c9c7dd703b2975f8a518b",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/buzz": "> 0.6",
+                "php": ">=5.3.2"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Sensio\\Bundle\\BuzzBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marc Weistroff",
+                    "email": "marc.weistroff@sensio.com"
+                }
+            ],
+            "description": "Bundle around the Buzz HTTP client",
+            "homepage": "https://github.com/sensio/SensioBuzzBundle",
+            "keywords": [
+                "buzz",
+                "http client"
+            ],
+            "time": "2016-03-15 10:06:41"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -3211,7 +3307,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "sensio/buzz-bundle": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

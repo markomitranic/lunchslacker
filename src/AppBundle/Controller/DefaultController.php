@@ -18,4 +18,11 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
         ]);
     }
+
+    public function readMenu(Request $request)
+    {
+        $buzz = $this->container->get('buzz');
+        $response = $buzz->get('https://docs.google.com/spreadsheets/d/1bj7NpJl3TnnmvMDI65AzaAR4c3hb3_Ifr_Nw7FL-lEs/export?format=csv&id=1bj7NpJl3TnnmvMDI65AzaAR4c3hb3_Ifr_Nw7FL-lEs&gid=0');
+        return $response;
+    }
 }
