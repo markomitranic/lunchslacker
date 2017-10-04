@@ -17,6 +17,7 @@
         "php": ">=5.5.9",
         "cleentfaar/slack-bundle": "^0.20.1",
         "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/mongodb-odm-bundle": "^3.1",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
         "sensio/distribution-bundle": "^5.0.19",
