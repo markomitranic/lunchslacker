@@ -20,4 +20,5 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
-    slack_api_token: SlackApiToken
+    slack_api_token: "SlackApiToken"
+    slack_bot_name: "Lunch-O-Matic 2000"
