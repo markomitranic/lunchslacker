@@ -77,3 +77,5 @@ doctrine_mongodb:
     document_managers:
         default:
             auto_mapping: true
+cl_slack:
+    api_token: '%slack_api_token%'
