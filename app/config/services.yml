@@ -34,3 +34,6 @@ services:
             $client: '@cl_slack.api_client'
             $userName: '%slack_bot_name%'
         public: true
+
+    AppBundle\Service\LunchFetchService:
+        public: true
