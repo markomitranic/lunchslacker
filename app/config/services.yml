@@ -37,3 +37,13 @@ services:
 
     AppBundle\Service\LunchFetchService:
         public: true
+
+    AppBundle\Service\ChannelService:
+        arguments:
+            $client: '@cl_slack.api_client'
+        public: true
+
+    AppBundle\Service\UserService:
+        arguments:
+            $client: '@cl_slack.api_client'
+        public: true
