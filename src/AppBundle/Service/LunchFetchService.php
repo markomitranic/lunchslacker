@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
  * Class MessageService
  * @package AppBundle\Service
  */
-class MessageService
+class LunchFetchService
 {
 
     public $sheetId = "1bj7NpJl3TnnmvMDI65AzaAR4c3hb3_Ifr_Nw7FL-lEs";
