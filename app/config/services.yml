@@ -34,3 +34,13 @@ services:
             $client: '@cl_slack.api_client'
             $userName: '%slack_bot_name%'
         public: true
+
+    AppBundle\Service\ChannelService:
+        arguments:
+            $client: '@cl_slack.api_client'
+        public: true
+
+    AppBundle\Service\UserService:
+        arguments:
+            $client: '@cl_slack.api_client'
+        public: true
