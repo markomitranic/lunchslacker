@@ -71,7 +71,6 @@ class SyncMenuCommand extends ContainerAwareCommand
             ;
             $dm->persist($meal);
         }
-
         $dm->flush();
     }
 
@@ -81,17 +80,15 @@ class SyncMenuCommand extends ContainerAwareCommand
      */
     private function resolveDate($dayName)
     {
-        $term = null;
-
-        if (date('w') < array_search($dayName, array_keys(self::$days))) {
+        $currentDayOfWeek = date('N', strtotime(date("l")));
+        $queriedDayOfWeek = date('N', strtotime(array_search($dayName, array_keys(self::$days))));
+        if($currentDayOfWeek < $queriedDayOfWeek) {
             return date('Y-m-d',  strtotime('next ' .  self::$days[$dayName]));
-        }
-
-        if (date('w') == array_search($dayName, array_keys(self::$days))) {
+        } else if ($currentDayOfWeek > $queriedDayOfWeek) {
+            return date('Y-m-d',  strtotime('last ' .  self::$days[$dayName]));
+        } else {
             return date('Y-m-d');
         }
-
-        return null;
     }
 
     /**
