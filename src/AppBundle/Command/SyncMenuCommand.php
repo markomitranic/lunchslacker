@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Document\Meal;
+use AppBundle\Document\User;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +29,7 @@ class SyncMenuCommand extends ContainerAwareCommand
     ];
 
     /**
-     * @var array
+     * @var User[]
      */
     private static $userMap = [];
 
@@ -46,17 +47,72 @@ class SyncMenuCommand extends ContainerAwareCommand
         foreach ($sheet as $day => $menu) {
             foreach ($menu as $meal => $users) {
                 foreach ($users as $user) {
-                    if (date('w') !== array_search($day, array_keys(self::$days))) {
-                        $date = date('Y-m-d',  strtotime('next ' .  self::$days[$day]));
-                    } else {
-                        $date = date('Y-m-d');
-                    }
-                    $meal = new Meal();
-                    $meal->setDate($date);
-                    $meal->setUser($this->getUserByName($user));
-                    $meal->setMeal($meal);
+                    $this->saveMeal($day, $user, $meal);
                 }
             }
+        }
+    }
+
+    /**
+     * @param string $day
+     * @param string $userName
+     * @param string $mealName
+     */
+    private function saveMeal($day, $userName, $mealName)
+    {
+        $date = $this->resolveDate($day);
+        $user = $this->getUserByName($userName);
+        $dm = $this->getDocumentManager();
+        if ($date && $user) {
+            $meal = new Meal();
+            $meal->setDate($this->resolveDate($day))
+                ->setUser($this->getUserByName($userName))
+                ->setMeal($mealName)
+            ;
+            $dm->persist($meal);
+        }
+
+        $dm->flush();
+    }
+
+    /**
+     * @param $dayName
+     * @return string
+     */
+    private function resolveDate($dayName)
+    {
+        $term = null;
+
+        if (date('w') < array_search($dayName, array_keys(self::$days))) {
+            return date('Y-m-d',  strtotime('next ' .  self::$days[$dayName]));
+        }
+
+        if (date('w') == array_search($dayName, array_keys(self::$days))) {
+            return date('Y-m-d');
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $name
+     * @return User|null
+     */
+    private function getUserByName($name)
+    {
+        $this->cacheUser($name);
+
+        return self::$userMap[$name];
+    }
+
+    /**
+     * @param string $name
+     */
+    private function cacheUser($name)
+    {
+        if (!isset(self::$userMap[$name])) {
+            $user = $this->getDocumentManager()->getRepository('AppBundle:User')->findOneBy(['name' => $name]);
+            self::$userMap[$name] = $user;
         }
     }
 
@@ -67,6 +123,7 @@ class SyncMenuCommand extends ContainerAwareCommand
     {
         $buzz = $this->getContainer()->get('buzz');
         $response = $buzz->get($this->getContainer()->getParameter('google_spreadsheet_menu_tsv'));
+
         return $this->parseContent($response->getContent());
     }
 
@@ -105,7 +162,16 @@ class SyncMenuCommand extends ContainerAwareCommand
             }
 
         }
+
         return $result;
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|object
+     */
+    private function getDocumentManager()
+    {
+        return $this->getContainer()->get('doctrine_mongodb')->getManager();
     }
 
 }
