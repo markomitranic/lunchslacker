@@ -2,8 +2,6 @@
 
 namespace AppBundle\Service;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -17,10 +15,11 @@ class LunchFetchService
 
     public $sheetId = "1bj7NpJl3TnnmvMDI65AzaAR4c3hb3_Ifr_Nw7FL-lEs";
 
+    private $buzz;
 
-    public function __construct()
+    public function __construct($buzz)
     {
-        //blah
+        $this->buzz = $buzz;
     }
 
 
@@ -29,7 +28,7 @@ class LunchFetchService
         if($sheetId === '') {
             $sheetId = $this->sheetId;
         }
-        $buzz = $this->container->get('buzz');
+        $buzz = $this->buzz;
         $serializer = new Serializer([new ObjectNormalizer()], [new CsvEncoder()]);
 
         // encoding contents in CSV format
@@ -39,11 +38,17 @@ class LunchFetchService
         return $csvData;
     }
 
+    public function parseCSVData($csv)
+    {
+        foreach($csv as $rowName => $value) {
+
+        }
+    }
+
     public function fetchByUser($user) {
         $this->fetchSheet();
     }
 
     public function fetchByUserByDay($day) {
-
     }
 }

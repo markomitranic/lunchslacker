@@ -36,6 +36,8 @@ services:
         public: true
 
     AppBundle\Service\LunchFetchService:
+        arguments:
+          $buzz: '@buzz'
         public: true
 
     AppBundle\Service\ChannelService:
