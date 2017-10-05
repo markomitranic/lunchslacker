@@ -28,7 +28,8 @@ class SyncUserCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $channels = $this->getChannels();
-        $this->sync($channels);
+        $emailNameMap = $this->getEmailNameMap();
+        $this->sync($channels, $emailNameMap);
     }
 
     private function getChannels()
@@ -37,14 +38,36 @@ class SyncUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param ImChannel[] $channels
+     * @return array
      */
-    private function sync(array $channels)
+    private function getEmailNameMap()
+    {
+        $buzz = $this->getContainer()->get('buzz');
+        $response = $buzz->get($this->getContainer()->getParameter('google_spreadsheet_users'));
+        $rawContent = $response->getContent();
+        $lines = explode("\r\n", $rawContent);
+        $headerArr = explode(',', array_shift($lines));
+        $nameIndex = array_search('Name', $headerArr);
+        $emailIndex = array_search('Official Email', $headerArr);
+        $result = [];
+        foreach ($lines as $line) {
+            $lineArr = explode(',', $line);
+            $result[$lineArr[$emailIndex]] = $lineArr[$nameIndex];
+        }
+        return $result;
+    }
+
+    /**
+     * @param ImChannel[] $channels
+     * @param array $emailNameMap
+     */
+    private function sync(array $channels, array $emailNameMap)
     {
         $dm = $this->getDocumentManager();
         foreach ($channels as $channel) {
             $user = $this->getUser($channel);
-            if ($user) {
+            if ($user && isset($emailNameMap[$user->getEmail()]) && $user->getEmail()) {
+                $user->setName($emailNameMap[$user->getEmail()]);
                 $dm->persist($user);
             }
         }
