@@ -22,3 +22,4 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
     slack_api_token: "SlackApiToken"
     slack_bot_name: "Lunch-O-Matic 2000"
+    google_spreadsheet_users: ""
