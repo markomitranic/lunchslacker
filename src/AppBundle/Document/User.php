@@ -20,7 +20,6 @@ class User
     /**
      * @var string
      *
-     * @MongoDB\String()
      * @MongoDB\Id(strategy="NONE")
      */
     private $userId;
