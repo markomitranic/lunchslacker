@@ -54,12 +54,12 @@ class SyncMenuCommand extends ContainerAwareCommand
         foreach ($sheet as $day => $menu) {
             foreach ($menu as $mealName => $users) {
                 $meal = new Meal();
-                $meal->setDay($day)
+                $meal->setDay(self::$days[$day])
                     ->setName($mealName);
                 $dm->persist($meal);
                 $dm->flush();
                 foreach ($users as $user) {
-                    $this->saveOrder($day, $user, $mealName);
+                    $this->saveOrder(self::$days[$day], $user, $mealName);
                 }
             }
         }
@@ -72,10 +72,9 @@ class SyncMenuCommand extends ContainerAwareCommand
      */
     private function saveOrder($day, $userName, $mealName)
     {
-        $date = $this->resolveDate($day);
         $user = $this->getUserByName($userName);
         $dm = $this->getDocumentManager();
-        if ($date && $user) {
+        if ($user) {
             $order = new Order();
             $order->setDay($day)
                 ->setUser($this->getUserByName($userName))
@@ -90,23 +89,6 @@ class SyncMenuCommand extends ContainerAwareCommand
     {
         $this->cacheMeal($mealName, $day);
         return self::$mealMap[$mealName][$day];
-    }
-
-    /**
-     * @param $dayName
-     * @return string
-     */
-    private function resolveDate($dayName)
-    {
-        $currentDayOfWeek = date('N', strtotime(date("l")));
-        $queriedDayOfWeek = date('N', strtotime(array_search($dayName, array_keys(self::$days))));
-        if($currentDayOfWeek < $queriedDayOfWeek) {
-            return date('Y-m-d',  strtotime('next ' .  self::$days[$dayName]));
-        } else if ($currentDayOfWeek > $queriedDayOfWeek) {
-            return date('Y-m-d',  strtotime('last ' .  self::$days[$dayName]));
-        } else {
-            return date('Y-m-d');
-        }
     }
 
     /**

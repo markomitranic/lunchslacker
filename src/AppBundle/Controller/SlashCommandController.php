@@ -78,8 +78,27 @@ class SlashCommandController extends Controller
         $messageService->sendMessage();
     }
 
-    private function sendMenuForDay($day) {
+    /**
+     * @param string $userId
+     * @param string $day
+     */
+    private function sendMenuForDay($userId, $day) {
         $messageService = $this->get("AppBundle\Service\MessageService");
-        $messageService->sendMessage();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $user = $dm->getRepository('AppBundle:User')->findOneBy(['userId' => $userId]);
+        if ($user) {
+            $orders = $dm->getRepository('AppBundle:Order')->findBy(['$id' => $userId, 'day' => $day]);
+            $attachments = [];
+            foreach ($orders as $order) {
+                $attachment = new Attachment();
+                $attachment->setPreText('pretext...');
+                $attachment->setColor('#7CD197');
+                $attachment->setText($order->getMeal()->getName());
+                $attachment->setText('This is a line of text');
+                $attachments[] = $attachment;
+
+            }
+            $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day .'*', $attachments);
+        }
     }
 }

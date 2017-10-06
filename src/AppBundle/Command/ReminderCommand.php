@@ -16,13 +16,13 @@ class ReminderCommand extends ContainerAwareCommand
      * @var string[]
      */
     private static $days = [
-        'NEDELJA',
-        'PONEDELJAK',
-        'UTORAK',
-        'SREDA',
-        'CETVRTAK',
-        'PETAK',
-        'SUBOTA'
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday'
     ];
 
     protected function configure()
