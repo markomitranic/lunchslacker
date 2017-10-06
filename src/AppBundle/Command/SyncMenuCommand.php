@@ -33,6 +33,9 @@ class SyncMenuCommand extends ContainerAwareCommand
      * @var User[]
      */
     private static $userMap  = [];
+    /**
+     * @var Meal[]
+     */
     private static $mealMap  = [];
 
     protected function configure()
@@ -165,6 +168,10 @@ class SyncMenuCommand extends ContainerAwareCommand
             }
 
             if (is_null($day)) {
+                continue;
+            }
+
+            if(empty(trim($lineArr[0]))) {
                 continue;
             }
 
