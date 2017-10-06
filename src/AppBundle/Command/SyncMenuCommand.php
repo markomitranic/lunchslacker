@@ -46,10 +46,17 @@ class SyncMenuCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sheet = $this->getSpreadsheet();
+        $dm = $this->getDocumentManager();
+        $dm->getDocumentCollection('AppBundle:Meal')->remove([]);
         foreach ($sheet as $day => $menu) {
-            foreach ($menu as $order => $users) {
+            foreach ($menu as $mealName => $users) {
+                $meal = new Meal();
+                $meal->setDay($day)
+                    ->setName($mealName);
+                $dm->persist($meal);
+                $dm->flush();
                 foreach ($users as $user) {
-                    $this->saveOrder($day, $user, $order);
+                    $this->saveOrder($day, $user, $mealName);
                 }
             }
         }
@@ -58,9 +65,9 @@ class SyncMenuCommand extends ContainerAwareCommand
     /**
      * @param string $day
      * @param string $userName
-     * @param string $orderName
+     * @param string $mealName
      */
-    private function saveOrder($day, $userName, $orderName)
+    private function saveOrder($day, $userName, $mealName)
     {
         $date = $this->resolveDate($day);
         $user = $this->getUserByName($userName);
@@ -69,7 +76,7 @@ class SyncMenuCommand extends ContainerAwareCommand
             $order = new Order();
             $order->setDate($date)
                 ->setUser($this->getUserByName($userName))
-                ->setMeal($this->getMealByNameDay($orderName, $day))
+                ->setMeal($this->getMealByNameDay($mealName, $day))
             ;
             $dm->persist($order);
         }
@@ -116,17 +123,16 @@ class SyncMenuCommand extends ContainerAwareCommand
     private function cacheUser($name)
     {
         if (!isset(self::$userMap[$name])) {
-            $user = $this->getDocumentManager()->getRepository('User')->findOneBy(['name' => $name]);
+            $user = $this->getDocumentManager()->getRepository('AppBundle:User')->findOneBy(['name' => $name]);
             self::$userMap[$name] = $user;
         }
     }
 
-    private function cacheMeal($name, $day)
+    private function cacheMeal($mealName, $day)
     {
-        if (!isset(self::$mealMap[$name])) {
-            $order = $this->getDocumentManager()->getRepository('Meal')->findOneBy(['name' => $name, 'day' => $day]);
-            self::$mealMap[$name] = [];
-            self::$mealMap[$name][$day] = $order;
+        if (!isset(self::$mealMap[$mealName][$day])) {
+            $order = $this->getDocumentManager()->getRepository('AppBundle:Meal')->findOneBy(['name' => $mealName, 'day' => $day]);
+            self::$mealMap[$mealName] = array($day => $order);
         }
     }
 

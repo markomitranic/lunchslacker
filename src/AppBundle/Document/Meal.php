@@ -80,7 +80,7 @@ class Meal
      * @param string $day
      * @return Meal
      */
-    public function setDate($day)
+    public function setDay($day)
     {
         $this->day = $day;
         return $this;
