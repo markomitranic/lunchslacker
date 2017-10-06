@@ -52,25 +52,25 @@ class SlashCommandController extends Controller
     private function sendLunchArrivedAnnouncment() {
         $messageService = $this->get("AppBundle\Service\MessageService");
 
-        $content = [
-            "text" => "*Lunch is here*",
-            "unfurl_links" => true
-        ];
+        $dm = $this->getDoctrine()->getManager();
+        $userRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:User');
+        $users = $userRepository->findAll();
 
-        $attachment = new Attachment();
-        $attachment->setTitle('Your order for today:');
-        $attachment->setPreText('pretext...');
-        $attachment->setColor('#7CD197');
-        $attachment->setText('This is a line of text');
+        foreach ($users as $user) {
+            $attachment = new Attachment();
+            $attachment->setTitle('Your order for today:');
+            $attachment->setPreText('pretext...');
+            $attachment->setColor('#7CD197');
+            $attachment->setText('This is a line of text');
 
-        $attachments = [];
+            $attachments = [];
 
-        $attachments[] = $attachment;
-        $attachment->setText('This is a line of text');
-        $attachments[] = $attachment;
+            $attachments[] = $attachment;
+            $attachment->setText('This is a line of text');
+            $attachments[] = $attachment;
 
-        $messageService->chatDelete('D7F4VAJCW');
-        $messageService->sendMessage('D7F4VAJCW', $content["text"], $attachments);
+            $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
+        }
     }
 
     private function sendMenuToUserMessage($userId) {
