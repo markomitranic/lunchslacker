@@ -11,7 +11,7 @@ class OrderRepository extends DocumentRepository
         return $this
             ->createQueryBuilder()
             ->field('user')->references($user)
-            ->field('day')->equals('day')
+            ->field('day')->equals($day)
             ->getQuery()
             ->execute();
     }
