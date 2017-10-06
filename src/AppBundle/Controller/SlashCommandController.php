@@ -72,7 +72,9 @@ class SlashCommandController extends Controller
 
             }
 
-            $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
+            if (!count($orders)) {
+                $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
+            }
         }
 
         return new JsonResponse(['status' => 'ok']);
@@ -88,7 +90,8 @@ class SlashCommandController extends Controller
      * @param string $userId
      * @param string $day
      */
-    private function sendMenuForDay($userId, $day) {
+    private function sendMenuForDay($userId, $day)
+    {
         if (strtolower($day) == 'today') {
             $day = strtolower(date('l'));
         }
@@ -107,7 +110,7 @@ class SlashCommandController extends Controller
                     $attachment->setText($order->getMeal()->getName());
                     $attachments[] = $attachment;
                 }
-                $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day .'*', $attachments);
+                $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day . '*', $attachments);
             } else {
                 $messageService->sendMessage($user->getChannelId(), '*You don\'t have orders for ' . $day . '*', $attachments);
             }
