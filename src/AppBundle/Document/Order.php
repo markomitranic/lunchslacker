@@ -5,7 +5,8 @@ namespace AppBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
- * @MongoDB\Document()
+ * @MongoDB\Document(repositoryClass="AppBundle\Document\OrderRepository")
+ *
  */
 class Order
 {
@@ -13,7 +14,6 @@ class Order
     /**
      * @var string
      *
-     * @MongoDB\String()
      * @MongoDB\Id()
      */
     private $id;
