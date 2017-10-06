@@ -51,9 +51,9 @@ class ReminderCommand extends ContainerAwareCommand
      */
     private function userHasMeals(User $user)
     {
-        $orders = $this->getDocumentManager()
-            ->getRepository('AppBundle:Order')
-            ->findBy(['user.$id' => $user->getUserId(), 'day' => self::$days[date('w')]]);
+            $orders = $this->getDocumentManager()
+                ->getRepository('AppBundle:Order')
+                ->findBy(['user.$id' => $user->getUserId(), 'day' => self::$days[date('w')]]);
 
         return count($orders) > 0;
     }
