@@ -50,31 +50,36 @@ class SlashCommandController extends Controller
         ]);
     }
 
-    private function sendLunchArrivedAnnouncment() {
+    private function sendLunchArrivedAnnouncment()
+    {
         $messageService = $this->get("AppBundle\Service\MessageService");
 
-        $dm = $this->getDoctrine()->getManager();
         $userRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:User');
         $users = $userRepository->findAll();
-
+        $attachments = [];
         foreach ($users as $user) {
-            $attachment = new Attachment();
-            $attachment->setTitle('Your order for today:');
-            $attachment->setPreText('pretext...');
-            $attachment->setColor('#7CD197');
-            $attachment->setText('This is a line of text');
 
-            $attachments = [];
+            $orderRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Order');
+            $orders = $orderRepository->findByUserAndDay($user, strtolower('l'));
 
-            $attachments[] = $attachment;
-            $attachment->setText('This is a line of text');
-            $attachments[] = $attachment;
+            foreach ($orders as $order) {
+
+                $attachment = new Attachment();
+                $attachment->setPreText('*Your order for today*');
+                $attachment->setColor('#7CD197');
+                $attachment->setText($order->getMeal()->getName());
+                $attachments[] = $attachment;
+
+            }
 
             $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
         }
+
+        return new JsonResponse(['status' => 'ok']);
     }
 
-    private function sendMenuToUserMessage($userId) {
+    private function sendMenuToUserMessage($userId)
+    {
         $messageService = $this->get("AppBundle\Service\MessageService");
         $messageService->sendMessage();
     }
