@@ -19,24 +19,18 @@ class Meal
     private $id;
 
     /**
-     * @var User
-     * @MongoDB\ReferenceOne(targetDocument="User")
+     * @var string
+     *
+     * @MongoDB\String()
      */
-    private $user;
+    private $day;
 
     /**
      * @var string
      *
      * @MongoDB\String()
      */
-    private $meal;
-
-    /**
-     * @var string
-     *
-     * @MongoDB\Date()
-     */
-    private $date;
+    private $name;
 
     /**
      * @return string
@@ -57,56 +51,38 @@ class Meal
     }
 
     /**
-     * @return User
+     * @return string
      */
-    public function getUser()
+    public function getName()
     {
-        return $this->user;
+        return $this->name;
     }
 
     /**
-     * @param User $user
+     * @param string $name
      * @return Meal
      */
-    public function setUser($user)
+    public function setName($name)
     {
-        $this->user = $user;
+        $this->name = $name;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getMeal()
+    public function getDay()
     {
-        return $this->meal;
+        return $this->day;
     }
 
     /**
-     * @param string $meal
+     * @param string $day
      * @return Meal
      */
-    public function setMeal($meal)
+    public function setDate($day)
     {
-        $this->meal = $meal;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * @param string $date
-     * @return Meal
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
+        $this->day = $day;
         return $this;
     }
 

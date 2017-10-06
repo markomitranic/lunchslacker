@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Document\Meal;
+use AppBundle\Document\Order;
 use AppBundle\Document\User;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +32,8 @@ class SyncMenuCommand extends ContainerAwareCommand
     /**
      * @var User[]
      */
-    private static $userMap = [];
+    private static $userMap  = [];
+    private static $mealMap  = [];
 
     protected function configure()
     {
@@ -45,9 +47,9 @@ class SyncMenuCommand extends ContainerAwareCommand
     {
         $sheet = $this->getSpreadsheet();
         foreach ($sheet as $day => $menu) {
-            foreach ($menu as $meal => $users) {
+            foreach ($menu as $order => $users) {
                 foreach ($users as $user) {
-                    $this->saveMeal($day, $user, $meal);
+                    $this->saveOrder($day, $user, $order);
                 }
             }
         }
@@ -56,22 +58,28 @@ class SyncMenuCommand extends ContainerAwareCommand
     /**
      * @param string $day
      * @param string $userName
-     * @param string $mealName
+     * @param string $orderName
      */
-    private function saveMeal($day, $userName, $mealName)
+    private function saveOrder($day, $userName, $orderName)
     {
         $date = $this->resolveDate($day);
         $user = $this->getUserByName($userName);
         $dm = $this->getDocumentManager();
         if ($date && $user) {
-            $meal = new Meal();
-            $meal->setDate($this->resolveDate($day))
+            $order = new Order();
+            $order->setDate($date)
                 ->setUser($this->getUserByName($userName))
-                ->setMeal($mealName)
+                ->setMeal($this->getMealByNameDay($orderName, $day))
             ;
-            $dm->persist($meal);
+            $dm->persist($order);
         }
         $dm->flush();
+    }
+
+    private function getMealByNameDay($mealName, $day)
+    {
+        $this->cacheMeal($mealName, $day);
+        return self::$mealMap[$mealName][$day];
     }
 
     /**
@@ -108,8 +116,17 @@ class SyncMenuCommand extends ContainerAwareCommand
     private function cacheUser($name)
     {
         if (!isset(self::$userMap[$name])) {
-            $user = $this->getDocumentManager()->getRepository('AppBundle:User')->findOneBy(['name' => $name]);
+            $user = $this->getDocumentManager()->getRepository('User')->findOneBy(['name' => $name]);
             self::$userMap[$name] = $user;
+        }
+    }
+
+    private function cacheMeal($name, $day)
+    {
+        if (!isset(self::$mealMap[$name])) {
+            $order = $this->getDocumentManager()->getRepository('Meal')->findOneBy(['name' => $name, 'day' => $day]);
+            self::$mealMap[$name] = [];
+            self::$mealMap[$name][$day] = $order;
         }
     }
 
