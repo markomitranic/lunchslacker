@@ -34,9 +34,9 @@ class Order
     /**
      * @var string
      *
-     * @MongoDB\Date()
+     * @MongoDB\String()
      */
-    private $date;
+    private $day;
 
     /**
      * @return string
@@ -95,18 +95,18 @@ class Order
     /**
      * @return string
      */
-    public function getDate()
+    public function getDay()
     {
-        return $this->date;
+        return $this->day;
     }
 
     /**
-     * @param string $date
+     * @param string $day
      * @return Order
      */
-    public function setDate($date)
+    public function setDay($day)
     {
-        $this->date = $date;
+        $this->day = $day;
         return $this;
     }
 

@@ -77,7 +77,7 @@ class SyncMenuCommand extends ContainerAwareCommand
         $dm = $this->getDocumentManager();
         if ($date && $user) {
             $order = new Order();
-            $order->setDate($date)
+            $order->setDay($day)
                 ->setUser($this->getUserByName($userName))
                 ->setMeal($this->getMealByNameDay($mealName, $day))
             ;

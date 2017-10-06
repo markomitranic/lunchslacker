@@ -49,4 +49,19 @@ class MessageService
         return $this->client->send($payload);
     }
 
+    /**
+     * @param string $channelId
+     * @param string $content
+     * @return \CL\Slack\Payload\PayloadResponseInterface
+     */
+    public function sendMessageToAChannel($channelId, $content)
+    {
+        $payload = new ChatPostMessagePayload();
+        $payload->setChannel($channelId);
+        $payload->setUsername($this->userName);
+        $payload->setText($content);
+
+        return $this->client->send($payload);
+    }
+
 }
