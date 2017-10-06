@@ -38,7 +38,7 @@ class SlashCommandController extends Controller
             case 'friday':
             case 'saturday':
             case 'sunday': {
-                $this->sendMenuForDay($userId, $text);
+                $this->sendOrderForDay($userId, $text);
                 break;
             }
         }
@@ -81,14 +81,41 @@ class SlashCommandController extends Controller
     private function sendMenuToUserMessage($userId)
     {
         $messageService = $this->get("AppBundle\Service\MessageService");
-        $messageService->sendMessage();
+        $dm = $this->get('doctrine_mongodb')->getManager();
+        $user = $dm->getRepository('AppBundle:User')->findOneBy(['userId' => $userId]);
+        if ($user) {
+            $meals = $dm->getRepository('AppBundle:Meal')->findAll();
+            $groupedMeals = [];
+            foreach ($meals as $meal) {
+                if (!isset($groupedMeals[$meal->getDay()])) {
+                    $groupedMeals[$meal->getDay()] = [];
+                }
+                $groupedMeals[$meal->getDay()][] = $meal;
+            }
+            $attachments = [];
+            foreach ($groupedMeals as $day => $mealsInGroup) {
+                $attachment = new Attachment();
+                $attachment->setTitle(ucfirst($day));
+                $attachment->setPreText('pretext...');
+                $attachment->setColor('#7CD197');
+                foreach ($mealsInGroup as $meal) {
+                    $textArr[] = $meal->getName();
+                }
+                $attachment->setText(implode("\n", $textArr));
+                $attachments[] = $attachment;
+            }
+            if (count($attachments)) {
+                $messageService->sendMessage($user->getChannelId(), '*Menu*', $attachments);
+            }
+
+        }
     }
 
     /**
      * @param string $userId
      * @param string $day
      */
-    private function sendMenuForDay($userId, $day) {
+    private function sendOrderForDay($userId, $day) {
         if (strtolower($day) == 'today') {
             $day = strtolower(date('l'));
         }
