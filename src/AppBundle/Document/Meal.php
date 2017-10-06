@@ -13,7 +13,6 @@ class Meal
     /**
      * @var string
      *
-     * @MongoDB\String()
      * @MongoDB\Id()
      */
     private $id;
