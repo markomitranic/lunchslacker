@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Document\Order;
 use CL\Slack\Model\Attachment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -87,24 +88,29 @@ class SlashCommandController extends Controller
      * @param string $userId
      * @param string $day
      */
-    private function sendMenuForDay($userId, $day)
-    {
+    private function sendMenuForDay($userId, $day) {
+        if (strtolower($day) == 'today') {
+            $day = strtolower(date('l'));
+        }
         $messageService = $this->get("AppBundle\Service\MessageService");
         $dm = $this->get('doctrine_mongodb')->getManager();
         $user = $dm->getRepository('AppBundle:User')->findOneBy(['userId' => $userId]);
         if ($user) {
-            $orders = $dm->getRepository('AppBundle:Order')->findBy(['user.$id' => $userId, 'day' => $day]);
+            /** @var  Order[] $orders */
+            $orders = $dm->getRepository('AppBundle:Order')->findByUserAndDay($user, $day);
             $attachments = [];
-            foreach ($orders as $order) {
-                $attachment = new Attachment();
-                $attachment->setPreText('pretext...');
-                $attachment->setColor('#7CD197');
-                $attachment->setText($order->getMeal()->getName());
-                $attachment->setText('This is a line of text');
-                $attachments[] = $attachment;
-
+            if (count($orders)) {
+                foreach ($orders as $order) {
+                    $attachment = new Attachment();
+                    $attachment->setPreText('pretext...');
+                    $attachment->setColor('#7CD197');
+                    $attachment->setText($order->getMeal()->getName());
+                    $attachments[] = $attachment;
+                }
+                $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day .'*', $attachments);
+            } else {
+                $messageService->sendMessage($user->getChannelId(), '*You don\'t have orders for ' . $day . '*', $attachments);
             }
-            $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day . '*', $attachments);
         }
     }
 }
