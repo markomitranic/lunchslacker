@@ -23,3 +23,4 @@ parameters:
     slack_api_token: "SlackApiToken"
     slack_bot_name: "Lunch-O-Matic 2000"
     google_spreadsheet_users: ""
+    google_spreadsheet_menu_tsv: ""

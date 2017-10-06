@@ -2,9 +2,13 @@
 
 namespace AppBundle\Service;
 
+use CL\Slack\Model\Attachment;
 use CL\Slack\Model\ImChannel;
+use CL\Slack\Payload\ChatDeletePayload;
 use CL\Slack\Payload\ChatPostMessagePayload;
 use CL\Slack\Transport\ApiClientInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 
 /**
  * Class MessageService
@@ -35,18 +39,26 @@ class MessageService
     }
 
     /**
-     * @param ImChannel $channel
+     * @param string $channelId
      * @param string $content
+     * @param $attachments
      * @return \CL\Slack\Payload\PayloadResponseInterface
      */
-    public function sendMessage(ImChannel $channel, $content)
+    public function sendMessage($channelId, $content, array $attachments)
     {
         $payload = new ChatPostMessagePayload();
-        $payload->setChannel($channel->getId());
+        $payload->setChannel($channelId);
         $payload->setUsername($this->userName);
         $payload->setText($content);
-
+        foreach ($attachments as $attachment) {
+            $payload->addAttachment($attachment);
+        }
         return $this->client->send($payload);
+    }
+
+    public function chatDelete($channelId) {
+        $payload = new ChatDeletePayload();
+        $this->client->send($payload);
     }
 
 }

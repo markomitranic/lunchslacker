@@ -89,8 +89,7 @@ class SyncUserCommand extends ContainerAwareCommand
                 ->setUserId($userResponse->getId())
                 ->setName($userResponse->getName())
                 ->setChannelId($channel->getId())
-                ->setFirstName($profile->getFirstName())
-                ->setLastName($profile->getLastName())
+                ->setChannelId($channel->getId())
                 ->setEmail($profile->getEmail())
             ;
 
