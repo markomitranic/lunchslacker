@@ -34,7 +34,7 @@ class Order
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $day;
 

@@ -20,14 +20,14 @@ class Meal
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $day;
 
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $name;
 

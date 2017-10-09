@@ -13,7 +13,7 @@ class User
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $channelId;
 
@@ -27,28 +27,28 @@ class User
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $name;
 
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $firstName;
 
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $lastName;
 
     /**
      * @var string
      *
-     * @MongoDB\String()
+     * @MongoDB\Field(type="string")
      */
     private $email;
 
