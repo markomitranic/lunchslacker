@@ -51,6 +51,7 @@ class SyncMenuCommand extends ContainerAwareCommand
         $sheet = $this->getSpreadsheet();
         $dm = $this->getDocumentManager();
         $dm->getDocumentCollection('AppBundle:Meal')->remove([]);
+        $dm->getDocumentCollection('AppBundle:Order')->remove([]);
         foreach ($sheet as $day => $menu) {
             foreach ($menu as $mealName => $users) {
                 $meal = new Meal();
