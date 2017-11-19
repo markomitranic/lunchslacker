@@ -53,6 +53,29 @@ class User
     private $email;
 
     /**
+     * @var boolean
+     *
+     * @MongoDB\Field(type="boolean")
+     */
+    private $subscribed;
+
+    /**
+     * @return bool
+     */
+    public function isSubscribed()
+    {
+        return $this->subscribed;
+    }
+
+    /**
+     * @param bool $subscribed
+     */
+    public function setSubscribed($subscribed)
+    {
+        $this->subscribed = $subscribed;
+    }
+
+    /**
      * @return string
      */
     public function getChannelId()

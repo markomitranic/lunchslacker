@@ -36,7 +36,7 @@ class ReminderCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
        $dm = $this->getDocumentManager();
-       $users = $dm->getRepository('AppBundle:User')->findAll();
+       $users = $dm->getRepository('AppBundle:User')->findBySubscribed(true);
        foreach ($users as $user) {
            if (!$this->userHasMeals($user)) {
                $this->sendReminder($user);

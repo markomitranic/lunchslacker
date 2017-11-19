@@ -56,7 +56,7 @@ class SlashCommandController extends Controller
         $messageService = $this->get("AppBundle\Service\MessageService");
 
         $userRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:User');
-        $users = $userRepository->findAll();
+        $users = $userRepository->findBySubscribed(true);
         $attachments = [];
         foreach ($users as $user) {
 
