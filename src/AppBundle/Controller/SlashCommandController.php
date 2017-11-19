@@ -93,6 +93,7 @@ class SlashCommandController extends Controller
                 }
                 $groupedMeals[$meal->getDay()][] = $meal;
             }
+
             $attachments = [];
             foreach ($groupedMeals as $day => $mealsInGroup) {
                 $attachment = new Attachment();
@@ -103,12 +104,12 @@ class SlashCommandController extends Controller
                     $textArr[] = $meal->getName();
                 }
                 $attachment->setText(implode("\n", $textArr));
+                unset($textArr);
                 $attachments[] = $attachment;
             }
             if (count($attachments)) {
                 $messageService->sendMessage($user->getChannelId(), '*Menu*', $attachments);
             }
-
         }
     }
 
