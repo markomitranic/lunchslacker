@@ -73,7 +73,7 @@ class SlashCommandController extends Controller
 
             }
 
-            if (!count($orders)) {
+            if (count($attachments)) {
                 $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
             }
         }
