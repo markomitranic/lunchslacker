@@ -5,6 +5,8 @@ namespace AppBundle\Service;
 use AppBundle\Exception\LunchSlackerException;
 use CL\Slack\Payload\UsersInfoPayload;
 use CL\Slack\Payload\UsersInfoPayloadResponse;
+use CL\Slack\Payload\UsersListPayload;
+use CL\Slack\Payload\UsersListPayloadResponse;
 use CL\Slack\Transport\ApiClientInterface;
 
 /**
@@ -45,6 +47,21 @@ class UserService
         }
 
         throw new LunchSlackerException('Could not retrieve IM channels. Error message: '
+            . $response->getError()
+            . '. Explanation: ' . $response->getErrorExplanation());
+    }
+
+    public function getAll()
+    {
+        $payload = new UsersListPayload();
+        /** @var UsersListPayloadResponse $response */
+        $response = $this->client->send($payload);
+
+        if ($response->isOk()) {
+            return $response->getUsers();
+        }
+
+        throw new LunchSlackerException('Could not retrieve list of users. Error message: '
             . $response->getError()
             . '. Explanation: ' . $response->getErrorExplanation());
     }

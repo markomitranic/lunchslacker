@@ -49,3 +49,8 @@ services:
         arguments:
             $client: '@cl_slack.api_client'
         public: true
+
+    AppBundle\Service\ImService:
+        arguments:
+            $client: '@cl_slack.api_client'
+        public: true

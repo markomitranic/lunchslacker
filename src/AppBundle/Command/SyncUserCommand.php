@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Document\User;
+use CL\Slack\Model\User as SlackUser;
 use CL\Slack\Model\ImChannel;
 use CL\Slack\Model\UserProfile;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -27,14 +28,9 @@ class SyncUserCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $channels = $this->getChannels();
+        $users = $this->fetchUsersFromSlack();
         $emailNameMap = $this->getEmailNameMap();
-        $this->sync($channels, $emailNameMap);
-    }
-
-    private function getChannels()
-    {
-       return $this->getContainer()->get('AppBundle\Service\ChannelService')->getImChannels();
+        $this->sync($users, $emailNameMap);
     }
 
     /**
@@ -58,15 +54,17 @@ class SyncUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param ImChannel[] $channels
+     * @param array $slackUsers
      * @param array $emailNameMap
      */
-    private function sync(array $channels, array $emailNameMap)
+    private function sync(array $slackUsers, array $emailNameMap)
     {
         $dm = $this->getDocumentManager();
-        foreach ($channels as $channel) {
-            $user = $this->getUser($channel);
+        foreach ($slackUsers as $slackUser) {
+            $user = $this->getUser($slackUser);
             if ($user && isset($emailNameMap[$user->getEmail()]) && $user->getEmail()) {
+                $imChannel = $this->fetchImChannelFromSlack($slackUser->getId());
+                $user->setChannelId($imChannel['id']);
                 $user->setName($emailNameMap[$user->getEmail()]);
                 $dm->persist($user);
             }
@@ -75,21 +73,19 @@ class SyncUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param ImChannel $channel
+     * @param SlackUser $user
      * @return User
      */
-    private function getUser(ImChannel $channel)
+    private function getUser(SlackUser $slackUser)
     {
-        $userResponse = $this->fetchUserFromSlack($channel->getuserId());
-        if ($userResponse) {
+        if ($slackUser) {
             /** @var UserProfile $profile */
-            $profile = $userResponse->getProfile();
+            $profile = $slackUser->getProfile();
             $user = new User();
+
             $user
-                ->setUserId($userResponse->getId())
-                ->setName($userResponse->getName())
-                ->setChannelId($channel->getId())
-                ->setChannelId($channel->getId())
+                ->setUserId($slackUser->getId())
+                ->setName($slackUser->getName())
                 ->setEmail($profile->getEmail())
             ;
 
@@ -100,13 +96,21 @@ class SyncUserCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param $userId
-     * @return \CL\Slack\Model\User|null
+     *
      */
-    private function fetchUserFromSlack($userId)
+    private function fetchImChannelFromSlack($userId)
     {
-        return $this->getContainer()->get('AppBundle\Service\UserService')->getById($userId);
+        return $this->getContainer()->get('AppBundle\Service\ImService')->getByUserId($userId);
     }
+
+    /**
+     *
+     */
+    private function fetchUsersFromSlack()
+    {
+        return $this->getContainer()->get('AppBundle\Service\UserService')->getAll();
+    }
+
 
     /**
      * @return \Doctrine\Common\Persistence\ObjectManager|object
