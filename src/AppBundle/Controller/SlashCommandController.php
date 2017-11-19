@@ -17,16 +17,18 @@ class SlashCommandController extends Controller
      */
     public function slashCommandAction(Request $request)
     {
-        $channelId = $request->get("channel_id");
         $userId = $request->get("user_id");
         $text = $request->get("text");
+        $responseText = '';
 
         switch ($text) {
             case 'arrived': {
+                $responseText = 'Ok, I\'ve told everyone about that :)';
                 $this->sendLunchArrivedAnnouncment();
                 break;
             }
             case 'menu': {
+                $responseText = 'Ok, I will send you menu for the whole week... huh';
                 $this->sendMenuToUserMessage($userId);
                 break;
             }
@@ -38,15 +40,14 @@ class SlashCommandController extends Controller
             case 'friday':
             case 'saturday':
             case 'sunday': {
+                $responseText = 'Ok, I will send you menu for ' . $text . '...';
                 $this->sendOrderForDay($userId, $text);
                 break;
             }
         }
 
         return new JsonResponse([
-            "channel_id" => $channelId,
-            "user_id" => $userId,
-            "text" => $text,
+            "text" => $responseText,
         ]);
     }
 
@@ -76,8 +77,6 @@ class SlashCommandController extends Controller
                 $messageService->sendMessage($user->getChannelId(), '*Lunch is here!*', $attachments);
             }
         }
-
-        return new JsonResponse(['status' => 'ok']);
     }
 
     private function sendMenuToUserMessage($userId)
@@ -139,7 +138,8 @@ class SlashCommandController extends Controller
                 }
                 $messageService->sendMessage($user->getChannelId(), '*Your order for ' . $day . '*', $attachments);
             } else {
-                $messageService->sendMessage($user->getChannelId(), '*You don\'t have orders for ' . $day . '*', $attachments);
+                $messageService->sendMessage($user->getChannelId(), '*You don\'t have orders for ' . $day . '*',
+                    $attachments);
             }
         }
     }
