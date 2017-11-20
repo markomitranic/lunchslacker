@@ -57,12 +57,11 @@ class SlashCommandController extends Controller
 
         $userRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:User');
         $users = $userRepository->findBySubscribed(true);
-        $attachments = [];
+
         foreach ($users as $user) {
-
+            $attachments = [];
             $orderRepository = $this->container->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:Order');
-            $orders = $orderRepository->findByUserAndDay($user, strtolower('l'));
-
+            $orders = $orderRepository->findByUserAndDay($user, strtolower(date('l')));
             foreach ($orders as $order) {
 
                 $attachment = new Attachment();
