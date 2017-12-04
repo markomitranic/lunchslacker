@@ -38,7 +38,7 @@ class ReminderCommand extends ContainerAwareCommand
        $dm = $this->getDocumentManager();
        $users = $dm->getRepository('AppBundle:User')->findBySubscribed(true);
        foreach ($users as $user) {
-           if (!$this->userHasMeals($user)) {
+           if ($this->isMenuSet() && !$this->userHasMeals($user)) {
                $this->sendReminder($user);
                $output->writeln('Reminder sent to: ' . $user->getName() . ' (' . $user->getEmail() . ')');  
            }
@@ -56,6 +56,18 @@ class ReminderCommand extends ContainerAwareCommand
                 ->findBy(['user.$id' => $user->getUserId(), 'day' => self::$days[date('w')]]);
 
         return count($orders) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isMenuSet()
+    {
+        $menu = $this->getDocumentManager()
+            ->getRepository('AppBundle:Meal')
+            ->findBy( ['day' => self::$days[date('w')]]);
+
+        return count($menu) > 0;
     }
 
     /**
